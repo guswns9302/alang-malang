@@ -8,9 +8,22 @@ import { GameModule } from './game/game.module';
 import { TopicModule } from './topic/topic.module';
 import { TopicDataModule } from './topic-data/topic-data.module';
 import { RankModule } from './rank/rank.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, TeamModule, GameModule, TopicModule, TopicDataModule, RankModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `${process.env.NODE_ENV || ''}.env`,
+    }),
+    UsersModule,
+    DatabaseModule,
+    TeamModule,
+    GameModule,
+    TopicModule,
+    TopicDataModule,
+    RankModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
