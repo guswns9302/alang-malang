@@ -1,4 +1,4 @@
-export class CreateTeamRes {
+export class TeamRes {
   teamId: number;
   teamName: string;
 }
