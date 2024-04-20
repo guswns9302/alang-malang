@@ -1,1 +1,5 @@
-export class CreateGameDto {}
+export class CreateGameDto {
+  gameName: string;
+  gameComment: string;
+  gameImg: string;
+}

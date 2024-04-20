@@ -19,33 +19,32 @@ export class TeamService {
   async create(createTeamDto: CreateTeamDto): Promise<TeamRes[]> {
     const { userId, teamName } = createTeamDto;
     const team = new Team();
-    team.user = await this.userRepository.findOneBy({ id: userId });
     team.name = teamName;
+    team.user = await this.userRepository.findOneBy({ id: userId });
     await this.teamRepository.save(team);
-    return this.findAll();
+    return this.find(userId);
   }
 
   async update(updateTeamDto: UpdateTeamDto): Promise<TeamRes[]> {
-    const { teamId, teamName } = updateTeamDto;
+    const { userId, teamId, teamName } = updateTeamDto;
     const team = await this.teamRepository.findOneBy({ id: teamId });
     team.name = teamName;
     await this.teamRepository.save(team);
-    return this.findAll();
+    return this.find(userId);
   }
 
-  async remove(id: number): Promise<TeamRes[]> {
-    const team = await this.teamRepository.findOneBy({ id });
-    await this.teamRepository.remove(team);
-    return this.findAll();
+  async remove(userId: string, teamId: number): Promise<TeamRes[]> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    await this.teamRepository.delete({ id: teamId, user: user });
+    return this.find(userId);
   }
 
-  async findAll(): Promise<TeamRes[]> {
-    const results = await this.teamRepository.find({});
+  async find(userId: string): Promise<TeamRes[]> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    const results = await user.teams;
     const responses = [];
     for (const result of results) {
-      const response = new TeamRes();
-      response.teamId = result.id;
-      response.teamName = result.name;
+      const response = new TeamRes(result.id, result.name);
       responses.push(response);
     }
     return responses;

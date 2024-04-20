@@ -18,8 +18,11 @@ export class TeamController {
     return this.teamService.update(updateTeamDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: number): Promise<TeamRes[]> {
-    return this.teamService.remove(+id);
+  @Delete(':userId/:teamId')
+  remove(
+    @Param('userId') userId: string,
+    @Param('teamId') teamId: number,
+  ): Promise<TeamRes[]> {
+    return this.teamService.remove(userId, +teamId);
   }
 }
