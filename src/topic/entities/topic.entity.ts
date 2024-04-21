@@ -17,6 +17,6 @@ export class Topic extends Common {
   @ManyToOne(() => Game, (game) => game.topics)
   game: Game;
 
-  @OneToMany(() => TopicData, (topicData) => topicData.topic)
+  @OneToMany(() => TopicData, (topicData) => topicData.topic, { lazy: true })
   topicDatas: TopicData[];
 }

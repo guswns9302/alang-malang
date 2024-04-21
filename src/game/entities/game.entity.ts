@@ -14,7 +14,7 @@ export class Game extends Common {
   @Column()
   img: string;
 
-  @OneToMany(() => Topic, (topic) => topic.game)
+  @OneToMany(() => Topic, (topic) => topic.game, { lazy: true })
   topics: Topic[];
 
   @OneToMany(() => Rank, (rank) => rank.game)

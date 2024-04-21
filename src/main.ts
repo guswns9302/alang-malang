@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CommonExceptionFilter } from './utils/common.exception.filter';
 import { Interceptor } from './utils/common.interceptor';
+import { ValidationPipe } from '@nestjs/common';
+
 // import { VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
@@ -16,7 +18,9 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new Interceptor());
   app.useGlobalFilters(new CommonExceptionFilter());
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(3000);
 }
+
 bootstrap();
