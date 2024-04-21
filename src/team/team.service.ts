@@ -54,7 +54,7 @@ export class TeamService {
     // for (const result of results) {
     //   const response = new TeamRes(result.id, result.name);
     //   responses.push(response);
-    // }
+    // } lock
     return await user.teams.map((team) => new TeamRes(team.id, team.name));
   }
 }
