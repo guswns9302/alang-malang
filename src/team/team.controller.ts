@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { TeamService } from './team.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
@@ -24,5 +32,10 @@ export class TeamController {
     @Param('teamId') teamId: number,
   ): Promise<TeamRes[]> {
     return this.teamService.remove(userId, +teamId);
+  }
+
+  @Get(':userId')
+  getTeam(@Param('userId') userId: string): Promise<TeamRes[]> {
+    return this.teamService.find(userId);
   }
 }

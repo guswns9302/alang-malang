@@ -1,6 +1,17 @@
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+
 export class CreateTopicDto {
+  @IsNumber()
+  @IsNotEmpty()
   gameId: number;
+
+  @IsString()
+  @IsNotEmpty()
   topicName: string;
+
   topicImg: string;
-  onBoard: Date;
+
+  @IsString()
+  @IsNotEmpty()
+  onBoard: string;
 }

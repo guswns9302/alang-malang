@@ -6,5 +6,5 @@ export class UpdateTopicDto extends PartialType(CreateTopicDto) {
   topicId: number;
   topicName: string;
   topicImg: string;
-  onBoard: Date;
+  onBoard: string;
 }

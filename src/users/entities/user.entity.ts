@@ -23,7 +23,7 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Team, (team) => team.user)
+  @OneToMany(() => Team, (team) => team.user, { eager: true })
   teams: Team[];
 
   @OneToMany(() => Rank, (rank) => rank.user)

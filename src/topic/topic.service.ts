@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,11 +18,18 @@ export class TopicService {
 
   async create(createTopicDto: CreateTopicDto): Promise<TopicRes[]> {
     const { gameId, topicName, topicImg, onBoard } = createTopicDto;
-    const topic = new Topic();
-    topic.name = topicName;
-    topic.img = topicImg;
-    topic.onBoard = onBoard;
-    topic.game = await this.gameRepository.findOneBy({ id: gameId });
+    const game = await this.gameRepository.findOneBy({ id: gameId });
+    if (!game) {
+      throw new NotFoundException('Game not found');
+    }
+
+    const topic = this.topicRepository.create({
+      name: topicName,
+      img: topicImg,
+      onBoard: new Date(onBoard),
+      game,
+    });
+
     await this.topicRepository.save(topic);
     return this.find(gameId);
   }
@@ -32,7 +39,7 @@ export class TopicService {
     const topic = await this.topicRepository.findOneBy({ id: topicId });
     topic.name = topicName;
     topic.img = topicImg;
-    topic.onBoard = onBoard;
+    topic.onBoard = new Date(onBoard);
     await this.topicRepository.save(topic);
     return this.find(gameId);
   }
@@ -45,17 +52,19 @@ export class TopicService {
 
   async find(gameId: number): Promise<TopicRes[]> {
     const game = await this.gameRepository.findOneBy({ id: gameId });
-    const results = await game.topics;
-    const responses = [];
-    for (const result of results) {
-      const response = new TopicRes(
-        result.id,
-        result.name,
-        result.img,
-        result.onBoard >= new Date(),
-      );
-      responses.push(response);
+    if (!game) {
+      throw new NotFoundException('Game not found');
     }
-    return responses;
+    const topics = await game.topics;
+
+    return topics.map(
+      (topic) =>
+        new TopicRes(
+          topic.id,
+          topic.name,
+          topic.img,
+          topic.onBoard >= new Date(),
+        ),
+    );
   }
 }
