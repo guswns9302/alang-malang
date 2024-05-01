@@ -18,11 +18,6 @@ export class TeamService {
 
   async create(createTeamDto: CreateTeamDto): Promise<TeamRes[]> {
     const { userId, teamName } = createTeamDto;
-    // const team = new Team();
-    // team.name = teamName;
-    // team.user = await this.userRepository.findOneBy({ id: userId });
-    // await this.teamRepository.save(team);
-    // return this.find(userId);
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new NotFoundException('User not found');
@@ -49,12 +44,6 @@ export class TeamService {
 
   async find(userId: string): Promise<TeamRes[]> {
     const user = await this.userRepository.findOneBy({ id: userId });
-    // const results = await user.teams;
-    // const responses = [];
-    // for (const result of results) {
-    //   const response = new TeamRes(result.id, result.name);
-    //   responses.push(response);
-    // } lock
     return await user.teams.map((team) => new TeamRes(team.id, team.name));
   }
 }

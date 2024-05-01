@@ -3,6 +3,7 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Team } from '../../team/entities/team.entity';
 import { Game } from '../../game/entities/game.entity';
+import { Topic } from '../../topic/entities/topic.entity';
 
 @Entity()
 export class Rank extends Common {
@@ -21,15 +22,15 @@ export class Rank extends Common {
   @Column()
   score: number;
 
-  @Column()
-  topicDatas: string;
-
-  @ManyToOne(() => User, (user) => user.ranks)
+  @ManyToOne(() => User, (user) => user.ranks, { lazy: true })
   user: User;
 
-  @ManyToOne(() => Team, (team) => team.ranks)
+  @ManyToOne(() => Team, (team) => team.ranks, { eager: true })
   team: Team;
 
-  @ManyToOne(() => Game, (game) => game.ranks)
+  @ManyToOne(() => Game, (game) => game.ranks, { eager: true })
   game: Game;
+
+  @ManyToOne(() => Topic, (topic) => topic.ranks, { eager: true })
+  topic: Topic;
 }

@@ -10,6 +10,6 @@ export class TopicData extends Common {
   @Column()
   name: string;
 
-  @ManyToOne(() => Topic, (topic) => topic.topicDatas)
+  @ManyToOne(() => Topic, (topic) => topic.topicDatas, { lazy: true })
   topic: Topic;
 }

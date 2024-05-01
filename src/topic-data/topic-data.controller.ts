@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { TopicDataService } from './topic-data.service';
 import { CreateTopicDataDto } from './dto/create-topic-data.dto';
 import { UpdateTopicDataDto } from './dto/update-topic-data.dto';
@@ -8,13 +16,22 @@ import { TopicDataRes } from './dto/topic-data.res';
 export class TopicDataController {
   constructor(private readonly topicDataService: TopicDataService) {}
 
+  @Get(':topicId')
+  select(@Param('topicId') topicId: number): Promise<TopicDataRes[]> {
+    return this.topicDataService.find(+topicId);
+  }
+
   @Post()
-  create(@Body() createTopicDatumDto: CreateTopicDataDto): Promise<TopicDataRes[]> {
+  create(
+    @Body() createTopicDatumDto: CreateTopicDataDto,
+  ): Promise<TopicDataRes[]> {
     return this.topicDataService.create(createTopicDatumDto);
   }
 
   @Patch()
-  update(@Body() updateTopicDatumDto: UpdateTopicDataDto): Promise<TopicDataRes[]> {
+  update(
+    @Body() updateTopicDatumDto: UpdateTopicDataDto,
+  ): Promise<TopicDataRes[]> {
     return this.topicDataService.update(updateTopicDatumDto);
   }
 

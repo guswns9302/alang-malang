@@ -8,9 +8,9 @@ export class Team extends Common {
   @Column()
   name: string;
 
-  @ManyToOne(() => User, (user) => user.teams)
+  @ManyToOne(() => User, (user) => user.teams, { lazy: true })
   user: User;
 
-  @OneToMany(() => Rank, (rank) => rank.team)
+  @OneToMany(() => Rank, (rank) => rank.team, { lazy: true })
   ranks: Rank[];
 }

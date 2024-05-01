@@ -17,6 +17,6 @@ export class Game extends Common {
   @OneToMany(() => Topic, (topic) => topic.game, { lazy: true })
   topics: Topic[];
 
-  @OneToMany(() => Rank, (rank) => rank.game)
+  @OneToMany(() => Rank, (rank) => rank.game, { lazy: true })
   ranks: Rank[];
 }

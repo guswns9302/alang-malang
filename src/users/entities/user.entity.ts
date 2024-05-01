@@ -26,6 +26,6 @@ export class User {
   @OneToMany(() => Team, (team) => team.user, { eager: true })
   teams: Team[];
 
-  @OneToMany(() => Rank, (rank) => rank.user)
+  @OneToMany(() => Rank, (rank) => rank.user, { lazy: true })
   ranks: Rank[];
 }

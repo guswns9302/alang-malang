@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTopicDataDto } from './dto/create-topic-data.dto';
 import { UpdateTopicDataDto } from './dto/update-topic-data.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,19 +16,43 @@ export class TopicDataService {
     private topicRepository: Repository<Topic>,
   ) {}
 
-  async create(createTopicDataDto: CreateTopicDataDto): Promise<TopicDataRes[]> {
+  async create(
+    createTopicDataDto: CreateTopicDataDto,
+  ): Promise<TopicDataRes[]> {
     const { topicId, topicDataName, topicDataLevel } = createTopicDataDto;
-    const topicData = new TopicData();
-    topicData.name = topicDataName;
-    topicData.level = topicDataLevel;
-    topicData.topic = await this.topicRepository.findOneBy({ id: topicId });
+
+    if (topicDataLevel !== 'easy' && topicDataLevel !== 'hard') {
+      throw new NotFoundException('Level not found');
+    }
+
+    const topic = await this.topicRepository.findOneBy({ id: topicId });
+    if (!topic) {
+      throw new NotFoundException('Topic not found');
+    }
+
+    const topicData = this.topicDataRepository.create({
+      name: topicDataName,
+      level: topicDataLevel,
+      topic,
+    });
+
     await this.topicDataRepository.save(topicData);
     return this.find(topicId);
   }
 
-  async update(updateTopicDataDto: UpdateTopicDataDto): Promise<TopicDataRes[]> {
-    const { topicId, topicDataId, topicDataName, topicDataLevel } = updateTopicDataDto;
-    const topicData = await this.topicDataRepository.findOneBy({ id: topicDataId });
+  async update(
+    updateTopicDataDto: UpdateTopicDataDto,
+  ): Promise<TopicDataRes[]> {
+    const { topicId, topicDataId, topicDataName, topicDataLevel } =
+      updateTopicDataDto;
+
+    if (topicDataLevel !== 'easy' && topicDataLevel !== 'hard') {
+      throw new NotFoundException('Level not found');
+    }
+
+    const topicData = await this.topicDataRepository.findOneBy({
+      id: topicDataId,
+    });
     topicData.name = topicDataName;
     topicData.level = topicDataLevel;
     await this.topicDataRepository.save(topicData);

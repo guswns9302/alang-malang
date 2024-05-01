@@ -1,34 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { RankService } from './rank.service';
 import { CreateRankDto } from './dto/create-rank.dto';
-import { UpdateRankDto } from './dto/update-rank.dto';
+import { RankByGameRes } from './dto/rankByGameRes';
+import { RankByUserRes } from './dto/rankByUserRes';
 
 @Controller('rank')
 export class RankController {
-  constructor(private readonly rankService: RankService) {}
+  constructor(private rankService: RankService) {}
 
   @Post()
-  create(@Body() createRankDto: CreateRankDto) {
+  create(@Body() createRankDto: CreateRankDto): Promise<RankByGameRes[]> {
     return this.rankService.create(createRankDto);
   }
 
-  @Get()
-  findAll() {
-    return this.rankService.findAll();
+  @Get(':userId')
+  getRank(@Param('userId') userId: string): Promise<RankByUserRes[]> {
+    return this.rankService.getRankByUser(userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.rankService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRankDto: UpdateRankDto) {
-    return this.rankService.update(+id, updateRankDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rankService.remove(+id);
+  @Delete(':userId')
+  refreshRank(@Param('userId') userId: string) {
+    return this.rankService.refresh(userId);
   }
 }

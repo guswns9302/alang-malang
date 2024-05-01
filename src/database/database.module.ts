@@ -5,8 +5,8 @@ import { Team } from '../team/entities/team.entity';
 import { Game } from '../game/entities/game.entity';
 import { Topic } from '../topic/entities/topic.entity';
 import { TopicData } from '../topic-data/entities/topic-data.entity';
-import { Rank } from '../rank/entities/rank.entity';
 import { ConfigService } from '@nestjs/config';
+import { Rank } from '../rank/entities/rank.entity';
 
 @Module({
   imports: [
