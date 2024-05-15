@@ -161,7 +161,7 @@ function addTopic() {
     contentType: 'application/json',
     dataType: 'json',
     success: function (response) {
-      $('#gameTopicId').val('');
+      $('#topicId').val('');
       $('#topicName').val('');
       $('#onBoard').val('');
       generateTopicList(response.data);
@@ -346,4 +346,62 @@ function deleteTopicData(topicDataId) {
       },
     });
   }
+}
+
+function test11() {
+  let file = $('#excel-upload')[0].files[0];
+  let formData = new FormData();
+  formData.append('file', file);
+
+  let topicId = Number($('#topicData-topicId').val());
+  $.ajax({
+    url: '/api/view/test/' + topicId,
+    type: 'POST',
+    enctype: 'multipart/form-data',
+    contentType: false,
+    processData: false,
+    data: formData,
+    success: function (response) {
+      const newArray = [];
+      for (let key in response) {
+        const item = response[key];
+        if (item.easy != null) {
+          newArray.push({
+            topicId: topicId,
+            topicDataName: item.easy,
+            topicDataLevel: 'easy',
+          });
+        }
+        if (item.hard != null) {
+          newArray.push({
+            topicId: topicId,
+            topicDataName: item.hard,
+            topicDataLevel: 'hard',
+          });
+        }
+      }
+
+      $.ajax({
+        url: '/api/topic-data/excel/' + topicId,
+        method: 'POST',
+        data: JSON.stringify(newArray),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (response) {
+          generateTopicDataList(response.data);
+          $('#excel-upload-div').empty();
+          $('#excel-upload-div').append(
+            `<input type="file" id="excel-upload" oninput="test11()">`,
+          );
+        },
+        error: function (response) {
+          console.log('실패');
+          console.log(response);
+        },
+      });
+    },
+    error: function (e) {
+      console.log(response);
+    },
+  });
 }

@@ -1,5 +1,18 @@
-import { Body, Controller, Get, Post, Render, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Render,
+  Req,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as XLSX from 'xlsx';
 
 @Controller('view')
 export class ViewController {
@@ -51,5 +64,26 @@ export class ViewController {
       return res.redirect('/api/view');
     }
     return res.render('admin.ejs');
+  }
+
+  @Post('/test/:topicId')
+  @UseInterceptors(FileInterceptor('file'))
+  async handleExcel(@UploadedFile() file, @Param('topicId') topicId: number) {
+    console.log(topicId);
+    const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+
+    // 첫번째 sheet 의 이름을 조회합니다.
+    const sheetName = workbook.SheetNames[0];
+
+    // 첫번째 sheet 를 사용합니다.
+    const sheet = workbook.Sheets[sheetName];
+
+    // sheet 의 정보를 json array 로 변환합니다.
+    const rows = XLSX.utils.sheet_to_json(sheet, {
+      // cell 에 값이 비어있으면 '' 을 기본값으로 설정합니다.
+      defval: null,
+    });
+
+    return rows;
   }
 }

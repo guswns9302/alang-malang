@@ -28,6 +28,14 @@ export class TopicDataController {
     return this.topicDataService.create(createTopicDatumDto);
   }
 
+  @Post('/excel/:topicId')
+  createExcel(
+    @Param('topicId') topicId: number,
+    @Body() createTopicDatumDtoList: CreateTopicDataDto[],
+  ): Promise<TopicDataRes[]> {
+    return this.topicDataService.createExcel(+topicId, createTopicDatumDtoList);
+  }
+
   @Patch()
   update(
     @Body() updateTopicDatumDto: UpdateTopicDataDto,

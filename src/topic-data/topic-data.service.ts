@@ -40,6 +40,36 @@ export class TopicDataService {
     return this.find(topicId);
   }
 
+  async createExcel(
+    topicId: number,
+    createTopicDatumDtoList: CreateTopicDataDto[],
+  ): Promise<TopicDataRes[]> {
+    const topic = await this.topicRepository.findOneBy({ id: topicId });
+    await this.topicDataRepository.delete({ topic: topic });
+
+    for (const i in createTopicDatumDtoList) {
+      const { topicId, topicDataName, topicDataLevel } =
+        createTopicDatumDtoList[i];
+      if (topicDataLevel !== 'easy' && topicDataLevel !== 'hard') {
+        throw new NotFoundException('Level not found');
+      }
+
+      const topic = await this.topicRepository.findOneBy({ id: topicId });
+      if (!topic) {
+        throw new NotFoundException('Topic not found');
+      }
+
+      const topicData = this.topicDataRepository.create({
+        name: topicDataName,
+        level: topicDataLevel,
+        topic,
+      });
+
+      await this.topicDataRepository.save(topicData);
+    }
+    return this.find(topicId);
+  }
+
   async update(
     updateTopicDataDto: UpdateTopicDataDto,
   ): Promise<TopicDataRes[]> {
