@@ -1,8 +1,8 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -22,11 +22,6 @@ export class SuccessResponse<T> {
   }
 }
 
-// export class CommonInterceptor<T> {
-//   readonly result: 'SUCCESS' | 'FAIL';
-//   data: T;
-// }
-
 @Injectable()
 export class Interceptor implements NestInterceptor {
   intercept(
@@ -36,6 +31,13 @@ export class Interceptor implements NestInterceptor {
     const httpContext = context.switchToHttp();
     const response = httpContext.getResponse();
     const statusCode = response.statusCode;
+
+    const path = httpContext.getRequest().path;
+    // 특정 경로를 확인하여 인터셉터를 건너뛸지 결정
+    if (path.startsWith('/api/view')) {
+      return next.handle();
+    }
+
     return next
       .handle()
       .pipe(

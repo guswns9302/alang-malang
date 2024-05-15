@@ -107,16 +107,23 @@ export class TopicService {
     }
 
     if (level == 'hard') {
+      // 쉬움 -> 40% / 보통 -> 60%
       easyCnt = Math.round((dataSize * 40) / 100);
       hardCnt = Math.round((dataSize * 60) / 100);
     }
 
     for (let i = 0; i < easyCnt; i++) {
       const idx = Math.floor(Math.random() * easyDummy.length);
+      console.log('쉬움 더미 : ' + easyDummy.length);
+      console.log('쉬움 : ' + idx);
+      console.log('쉬움 데이터 : ' + easyDummy[idx]);
       resultList.push(easyDummy[idx]);
     }
     for (let i = 0; i < hardCnt; i++) {
       const idx = Math.floor(Math.random() * hardDummy.length);
+      console.log('하드 더미 : ' + hardDummy.length);
+      console.log('하드 : ' + idx);
+      console.log('하드 데이터 : ' + hardDummy[idx]);
       resultList.push(hardDummy[idx]);
     }
 

@@ -9,6 +9,8 @@ import { TopicModule } from './topic/topic.module';
 import { TopicDataModule } from './topic-data/topic-data.module';
 import { RankModule } from './rank/rank.module';
 import { ConfigModule } from '@nestjs/config';
+import { ViewController } from './views/view/view.controller';
+import { ViewModule } from './views/view/view.module';
 
 @Module({
   imports: [
@@ -23,8 +25,9 @@ import { ConfigModule } from '@nestjs/config';
     TopicModule,
     TopicDataModule,
     RankModule,
+    ViewModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ViewController],
   providers: [AppService],
 })
 export class AppModule {}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>ejs-view test</title>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/admin.js"></script>
+
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        /*이중선 제거*/
+        th, td {
+            width: 100px;
+            height: 50px;
+            text-align: center;
+            border: 1px solid #000;
+
+            vertical-align: top; /* 위 */
+            vertical-align: bottom; /* 아래 */
+            vertical-align: middle; /* 가운데 */
+        }
+    </style>
+</head>
+<body>
+<h1>알랑말랑 어드민</h1>
+<hr>
+<h3>게임 목록</h3>
+<div style="border-color: black; border-width: 1px; margin-bottom: 10px;">
+    <form id="game-form">
+        <input id="gameId" type="hidden">
+        <input id="gameName" type="text" placeholder="게임 명">
+        <input id="gameComment" type="text" placeholder="게임 코멘트">
+    </form>
+    <button id="gameBTN" type="button" onclick="addGame()">게임 추가</button>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>번호</th>
+        <th>게임명</th>
+        <th>코멘트</th>
+        <th>수정</th>
+        <th>주제 목록 보기</th>
+    </tr>
+    </thead>
+    <tbody id="game-list">
+    <tr>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 주제 시작 -->
+<div id="game-topic-div" style="display: none;">
+    <hr>
+    <h3 id="game-topic-title"> 주제 목록</h3>
+
+    <div style="border-color: black; border-width: 1px; margin-bottom: 10px;">
+        <form id="game-topic-form">
+            <input id="gameTopicId" type="hidden">
+            <input id="topicId" type="hidden">
+            <input id="topicName" type="text" placeholder="주제 명">
+            <input id="onBoard" type="text" placeholder="ex) 2024-05-15">
+        </form>
+        <button id="topicBTN" type="button" onclick="addTopic()">주제 추가</button>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>주제명</th>
+            <th>온보딩</th>
+            <th>수정</th>
+            <th>단어 목록 보기</th>
+        </tr>
+        </thead>
+        <tbody id="topic-list">
+        <tr>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!-- 주제 끝 -->
+
+<!-- 주제 데이터 시작 -->
+<div id="topic-data-div" style="display: none;">
+    <hr>
+    <h3 id="topic-data-title"> 단어 목록</h3>
+
+    <div style="border-color: black; border-width: 1px; margin-bottom: 10px;">
+        <form id="topic-data-form">
+            <input id="topicData-topicId" type="hidden">
+            <input id="topicDataId" type="hidden">
+            <input id="topicDataName" type="text" placeholder="단어">
+            <input id="topicDataLevel" type="text" placeholder="ex) easy | hard">
+        </form>
+        <button id="topic-dataBTN" type="button" onclick="addTopicData()">단어 추가</button>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>단어</th>
+            <th>레벨</th>
+            <th>수정</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody id="topic-data-list">
+        <tr>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!-- 주제 데이터 끝 -->
+
+</body>
+</html>

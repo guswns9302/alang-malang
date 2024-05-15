@@ -1,20 +1,19 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { CommonExceptionFilter } from './utils/common.exception.filter';
-import { Interceptor } from './utils/common.interceptor';
 import { ValidationPipe } from '@nestjs/common';
-
-// import { VersioningType } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+import { Interceptor } from './utils/common.interceptor';
+import { CommonExceptionFilter } from './utils/common.exception.filter';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useStaticAssets(join(__dirname, '..', 'src', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'src', 'views'));
+  app.setViewEngine('ejs');
 
   app.setGlobalPrefix('api');
-
-  // app.enableVersioning({
-  //   type: VersioningType.URI,
-  //   defaultVersion: '1',
-  // });
 
   app.useGlobalInterceptors(new Interceptor());
   app.useGlobalFilters(new CommonExceptionFilter());

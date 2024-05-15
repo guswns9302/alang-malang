@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { GameRes } from './dto/game.res';
@@ -16,5 +16,10 @@ export class GameController {
   @Patch()
   update(@Body() updateGameDto: UpdateGameDto): Promise<GameRes[]> {
     return this.gameService.update(updateGameDto);
+  }
+
+  @Get()
+  getList(): Promise<GameRes[]> {
+    return this.gameService.find();
   }
 }
