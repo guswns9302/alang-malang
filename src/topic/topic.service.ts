@@ -65,6 +65,15 @@ export class TopicService {
           topic.name,
           topic.img,
           topic.onBoard >= new Date(),
+          [
+            topic.onBoard.getFullYear(),
+            topic.onBoard.getMonth() + 1 > 9
+              ? topic.onBoard.getMonth() + 1
+              : '0' + (topic.onBoard.getMonth() + 1),
+            topic.onBoard.getDate() > 9
+              ? topic.onBoard.getDate()
+              : '0' + topic.onBoard.getDate(),
+          ].join('-'),
         ),
     );
   }

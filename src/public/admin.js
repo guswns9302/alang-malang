@@ -35,9 +35,8 @@ function addGame() {
     contentType: 'application/json',
     dataType: 'json',
     success: function (response) {
-      $('#gameId').val('');
-      $('#gameName').val('');
-      $('#gameComment').val('');
+      alert('게임 추가됬다야~');
+      modifyGame(0);
       generateGameList(response.data);
     },
     error: function (response) {
@@ -49,28 +48,38 @@ function addGame() {
 
 function generateGameList(data) {
   GAME_LIST = data;
-  $('#game-list').empty();
-  let html = ``;
+  $('#data-game-div').show();
+  $('#data-topic-div').hide();
+  $('#data-word-div').hide();
+  $('#nav-li').empty();
+  let selectHtml = ``;
   for (let i in data) {
-    html += `<tr>`;
-    html += `  <td>${data[i].gameId}</td>`;
-    html += `  <td>${data[i].gameName}</td>`;
-    html += `  <td>${data[i].gameComment}</td>`;
-    html += `  <td><button type="button" onclick="modifyGame(${data[i].gameId});">수정</button></td>`;
-    html += `  <td><button type="button" onclick="getTopicList(${data[i].gameId}, '${data[i].gameName}');">보기</button></td>`;
-    html += `</tr>`;
+    selectHtml += `<li><button style="width: 100%" class="secondary" value="${data[i].gameId}" onclick="modifyGame(this.value, this);">${data[i].gameName}</button></li>`;
   }
-
-  $('#game-list').append(html);
+  $('#nav-li').append(selectHtml);
 }
 
-function modifyGame(gameId) {
-  let game = GAME_LIST.filter((x) => x.gameId === gameId)[0];
+function modifyGame(gameId, btn) {
+  $.each($('#nav-li').find('button'), function (idx, value) {
+    $(value).removeClass('active');
+  });
+
+  if (Number(gameId) === 0) {
+    $('#gameId').val('');
+    $('#gameName').val('');
+    $('#gameComment').val('');
+    $('#gameBTN').text('게임 추가').attr('onclick', 'addGame()');
+    $('#callTopicBtn').hide();
+    return;
+  }
+  $(btn).addClass('active');
+  let game = GAME_LIST.filter((x) => x.gameId === Number(gameId))[0];
   $('#gameId').val(game.gameId);
   $('#gameName').val(game.gameName);
   $('#gameComment').val(game.gameComment);
 
   $('#gameBTN').text('게임 수정').attr('onclick', 'callModifyGame()');
+  $('#callTopicBtn').show();
 }
 
 function callModifyGame() {
@@ -90,7 +99,7 @@ function callModifyGame() {
     contentType: 'application/json',
     dataType: 'json',
     success: function (response) {
-      $('#gameId').val('');
+      alert('게임 수정됬다야~');
       $('#gameName').val('');
       $('#gameComment').val('');
       $('#gameBTN').text('게임 추가').attr('onclick', 'addGame()');
@@ -105,11 +114,10 @@ function callModifyGame() {
 
 let TOPIC_LIST = [];
 
-function getTopicList(gameId, gameName) {
-  $('#game-topic-form')[0].reset();
-  $('#topicBTN').text('주제 추가').attr('onclick', 'addTopic()');
-  $('#game-topic-title').text('게임 [' + gameName + '] 주제 목록');
-  $('#gameTopicId').val(gameId);
+function getTopicList() {
+  $('#data-game-div').hide();
+  let gameId = $('#gameId').val();
+
   $.ajax({
     url: '/api/topic/' + Number(gameId),
     method: 'GET',
@@ -127,27 +135,30 @@ function getTopicList(gameId, gameName) {
 
 function generateTopicList(data) {
   TOPIC_LIST = data;
-  $('#topic-list').empty();
-  let html = ``;
-  for (let i in data) {
-    html += `<tr>`;
-    html += `  <td>${data[i].topicId}</td>`;
-    html += `  <td>${data[i].topicName}</td>`;
-    html += `  <td>${data[i].onBoard}</td>`;
-    html += `  <td><button type="button" onclick="modifyTopic(${data[i].topicId});">수정</button></td>`;
-    html += `  <td><button type="button" onclick="getTopicDataList(${data[i].topicId}, '${data[i].topicName}');">보기</button></td>`;
-    html += `</tr>`;
-  }
+  $('#data-game-div').hide();
+  $('#data-topic-div').show();
+  $('#data-word-div').hide();
 
-  $('#topic-list').append(html);
-  $('#game-topic-div').show();
-  $('#topic-data-div').hide();
+  $('#nav-li').empty();
+  let selectHtml = `<button style="width: 100%; background-color: deepskyblue;" onclick="getGameList();">${$('#gameName').val()}</button>`;
+  for (let i in data) {
+    selectHtml += `<li><button style="width: 100%" class="secondary" value="${data[i].topicId}" onclick="modifyTopic(this.value);">${data[i].topicName}</button></li>`;
+  }
+  $('#nav-li').append(selectHtml);
+}
+
+function isBool(date) {
+  if (new Date(date) >= new Date()) {
+    $('#onBoard').val(true);
+  } else {
+    $('#onBoard').val(false);
+  }
 }
 
 function addTopic() {
-  let gameId = $('#gameTopicId').val();
+  let gameId = $('#gameId').val();
   let topicName = $('#topicName').val();
-  let onBoard = $('#onBoard').val();
+  let onBoard = $('#onBoardDate').val();
 
   $.ajax({
     url: '/api/topic',
@@ -161,9 +172,8 @@ function addTopic() {
     contentType: 'application/json',
     dataType: 'json',
     success: function (response) {
-      $('#topicId').val('');
-      $('#topicName').val('');
-      $('#onBoard').val('');
+      alert('주제 추가 됬다야~');
+      modifyTopic(0);
       generateTopicList(response.data);
     },
     error: function (response) {
@@ -174,18 +184,30 @@ function addTopic() {
 }
 
 function modifyTopic(topicId) {
-  let topic = TOPIC_LIST.filter((x) => x.topicId === topicId)[0];
+  if (Number(topicId) === 0) {
+    $('#topicId').val('');
+    $('#topicName').val('');
+    $('#onBoard').val('');
+    $('#onBoardDate').val('');
+    $('#topicBTN').text('주제 추가').attr('onclick', 'addTopic()');
+    $('#callTopicDataBtn').hide();
+    return;
+  }
+
+  let topic = TOPIC_LIST.filter((x) => x.topicId === Number(topicId))[0];
+  $('#topicId').val(topic.topicId);
   $('#topicName').val(topic.topicName);
   $('#onBoard').val(topic.onBoard);
-  $('#topicId').val(topic.topicId);
+  $('#onBoardDate').val(topic.onBoardDate);
   $('#topicBTN').text('주제 수정').attr('onclick', 'callModifyTopic()');
+  $('#callTopicDataBtn').show();
 }
 
 function callModifyTopic() {
-  let gameId = $('#gameTopicId').val();
+  let gameId = $('#gameId').val();
   let topicId = $('#topicId').val();
   let topicName = $('#topicName').val();
-  let onBoard = $('#onBoard').val();
+  let onBoard = $('#onBoardDate').val();
 
   $.ajax({
     url: '/api/topic',
@@ -200,10 +222,8 @@ function callModifyTopic() {
     contentType: 'application/json',
     dataType: 'json',
     success: function (response) {
-      $('#topicId').val('');
-      $('#topicName').val('');
-      $('#onBoard').val('');
-      $('#topicBTN').text('주제 추가').attr('onclick', 'addTopic()');
+      alert('주제 수정 됬다야~');
+      modifyTopic(0);
       generateTopicList(response.data);
     },
     error: function (response) {
@@ -215,12 +235,11 @@ function callModifyTopic() {
 
 let TOPIC_DATA_LIST = [];
 
-function getTopicDataList(topicId, topicName) {
-  $('#game-topic-form')[0].reset();
-  $('#topic-data-form')[0].reset();
-  $('#topic-dataBTN').text('단어 추가').attr('onclick', 'addTopicData()');
-  $('#topic-data-title').text('주제 [' + topicName + '] 단어 목록');
-  $('#topicData-topicId').val(topicId);
+function getTopicDataList() {
+  $('#data-topic-div').hide();
+
+  let topicId = $('#topicId').val();
+
   $.ajax({
     url: '/api/topic-data/' + Number(topicId),
     method: 'GET',
@@ -238,26 +257,72 @@ function getTopicDataList(topicId, topicName) {
 
 function generateTopicDataList(data) {
   TOPIC_DATA_LIST = data;
+
+  $('#data-game-div').hide();
+  $('#data-topic-div').hide();
+  $('#data-word-div').show();
+  let easy = data.filter((x) => x.topicDataLevel == 'easy');
+  let hard = data.filter((x) => x.topicDataLevel == 'hard');
+
+  let idx = easy.length >= hard.length ? easy.length : hard.length;
   $('#topic-data-list').empty();
   let html = ``;
-  for (let i in data) {
+  for (let i = 0; i < idx; i++) {
+    let easyName = easy[i] == undefined ? '' : easy[i].topicDataName;
+    let hardName = hard[i] == undefined ? '' : hard[i].topicDataName;
+    let easyId = easy[i] == undefined ? 0 : easy[i].topicDataId;
+    let hardId = hard[i] == undefined ? 0 : hard[i].topicDataId;
     html += `<tr>`;
-    html += `  <td>${data[i].topicDataId}</td>`;
-    html += `  <td>${data[i].topicDataName}</td>`;
-    html += `  <td>${data[i].topicDataLevel}</td>`;
-    html += `  <td><button type="button" onclick="modifyTopicData(${data[i].topicDataId});">수정</button></td>`;
-    html += `  <td><button type="button" onclick="deleteTopicData(${data[i].topicDataId});">삭제</button></td>`;
+    html += ` <td data-target="add-word-modal" onclick="openAddWordModal(${easyId})">${easyName}</td>`;
+    html += ` <td data-target="add-word-modal" onclick="openAddWordModal(${hardId})">${hardName}</td>`;
     html += `</tr>`;
   }
 
   $('#topic-data-list').append(html);
-  $('#topic-data-div').show();
+
+  $('#nav-li').empty();
+  let selectHtml = `<button style="width: 100%; background-color: deepskyblue;" onclick="getTopicList();">${$('#topicName').val()}</button>`;
+  $('#nav-li').append(selectHtml);
+}
+
+function openAddWordModal(topicDataId) {
+  toggleModal(event);
+  if (Number(topicDataId) === 0) {
+    $('#topicDataId').val('');
+    $('#topicDataName').val('');
+    $('#topicDataLevel').val('');
+    $('#topic-dataBTN').text('추가').attr('onclick', 'addTopicData()');
+    $('#topic-data-delBTN').hide();
+    return;
+  }
+
+  let topicData = TOPIC_DATA_LIST.filter(
+    (x) => x.topicDataId === topicDataId,
+  )[0];
+  $('#topicDataName').val(topicData.topicDataName);
+  $('#topicDataLevel').val(topicData.topicDataLevel);
+  $('#topicDataId').val(topicData.topicDataId);
+  $('#topic-dataBTN').text('수정').attr('onclick', 'callModifyTopicData()');
+  $('#topic-data-delBTN').show();
 }
 
 function addTopicData() {
-  let topicId = $('#topicData-topicId').val();
+  let e = event;
+
+  let topicId = $('#topicId').val();
   let topicDataName = $('#topicDataName').val();
-  let topicDataLevel = $('#topicDataLevel').val();
+  let topicDataLevel = $('#topicDataLevel option:selected').val();
+
+  if (topicDataName == '') {
+    alert('단어를 입력해달라냥~');
+    $('#topicDataName').focus();
+    return;
+  }
+  if (topicDataLevel == '') {
+    alert('난이도를 선택해달라냥~');
+    $('#topicDataLevel').focus();
+    return;
+  }
 
   $.ajax({
     url: '/api/topic-data',
@@ -270,32 +335,20 @@ function addTopicData() {
     contentType: 'application/json',
     dataType: 'json',
     success: function (response) {
-      $('#topicDataId').val('');
-      $('#topicDataName').val('');
-      $('#topicDataLevel').val('');
       generateTopicDataList(response.data);
+      alert('새로운 단어가 추가됬다냥~');
     },
     error: function (response) {
       console.log('실패');
       console.log(response);
     },
   });
-}
-
-function modifyTopicData(topicDataId) {
-  let topicData = TOPIC_DATA_LIST.filter(
-    (x) => x.topicDataId === topicDataId,
-  )[0];
-  $('#topicDataName').val(topicData.topicDataName);
-  $('#topicDataLevel').val(topicData.topicDataLevel);
-  $('#topicDataId').val(topicData.topicDataId);
-  $('#topic-dataBTN')
-    .text('단어 수정')
-    .attr('onclick', 'callModifyTopicData()');
+  toggleModal(e);
 }
 
 function callModifyTopicData() {
-  let topicId = $('#topicData-topicId').val();
+  let e = event;
+  let topicId = $('#topicId').val();
   let topicDataId = $('#topicDataId').val();
   let topicDataName = $('#topicDataName').val();
   let topicDataLevel = $('#topicDataLevel').val();
@@ -312,33 +365,32 @@ function callModifyTopicData() {
     contentType: 'application/json',
     dataType: 'json',
     success: function (response) {
-      console.log(response);
-      $('#topicDataId').val('');
-      $('#topicDataName').val('');
-      $('#topicDataLevel').val('');
-      $('#topic-dataBTN').text('단어 추가').attr('onclick', 'addTopicData()');
       generateTopicDataList(response.data);
+      alert('단어가 수정됬다냥~');
     },
     error: function (response) {
       console.log('실패');
       console.log(response);
     },
   });
+  toggleModal(e);
 }
 
-function deleteTopicData(topicDataId) {
+function deleteTopicData() {
+  let e = event;
   if (confirm('정말 삭제하시겠습니까?')) {
     $.ajax({
       url:
         '/api/topic-data/' +
-        Number($('#topicData-topicId').val()) +
+        Number($('#topicId').val()) +
         '/' +
-        Number(topicDataId),
+        Number($('#topicDataId').val()),
       method: 'DELETE',
       contentType: 'application/json',
       dataType: 'json',
       success: function (response) {
         generateTopicDataList(response.data);
+        alert('단어가 삭제됬다냥~');
       },
       error: function (response) {
         console.log('실패');
@@ -346,16 +398,17 @@ function deleteTopicData(topicDataId) {
       },
     });
   }
+  toggleModal(e);
 }
 
-function test11() {
+function uploadExcelWord() {
   let file = $('#excel-upload')[0].files[0];
   let formData = new FormData();
   formData.append('file', file);
 
-  let topicId = Number($('#topicData-topicId').val());
+  let topicId = Number($('#topicId').val());
   $.ajax({
-    url: '/api/view/test/' + topicId,
+    url: '/api/view/excel/upload/' + topicId,
     type: 'POST',
     enctype: 'multipart/form-data',
     contentType: false,
@@ -393,6 +446,7 @@ function test11() {
           $('#excel-upload-div').append(
             `<input type="file" id="excel-upload" oninput="test11()">`,
           );
+          alert('엑셀 데이터가 추가됬다냥~');
         },
         error: function (response) {
           console.log('실패');
@@ -401,7 +455,7 @@ function test11() {
       });
     },
     error: function (e) {
-      console.log(response);
+      console.log(e);
     },
   });
 }

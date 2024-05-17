@@ -2,18 +2,42 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>ejs-view test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark" />
+    <title>알랑말랑 어드민! >.<</title>
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/view.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+<main class="container">
+    <h1 style="text-align: center">알랑말랑 관리자</h1>
+    <article>
+        <header>
+            접속 코드를 입력하세요.
+        </header>
+        <input id="code" type="text" placeholder="알랑말랑 접속 코드" />
+        <footer>
+            <button style="width: 100%" type="button" onclick="sendCode();">전송!</button>
+        </footer>
+    </article>
+</main>
 
-<h1>알랑말랑 어드민</h1>
-<p>접속 코드를 입력하세요.</p>
-<div>
-    <input id="code" type="text">
-</div>
-<button type="button" onclick="sendCode();">전송!</button>
 </body>
 </html>

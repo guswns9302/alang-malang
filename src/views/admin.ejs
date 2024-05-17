@@ -2,125 +2,185 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>ejs-view test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark" />
+    <title>알랑말랑 어드민! >.<</title>
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/modal.js"></script>
     <script src="/admin.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+
     <style>
-        table {
-            border-collapse: collapse;
+        .nav-vertical {
+            max-width: 10.625rem;
+            width: 10.625rem;
+            height: 100vh;
+            position: fixed;
+            display: inline-block;
+            padding: 0;
+            z-index: 1019;
+            top: 4.3125rem;
+            margin-left: 2rem;
+            background-image: none;
         }
 
-        /*이중선 제거*/
-        th, td {
-            width: 100px;
-            height: 50px;
-            text-align: center;
-            border: 1px solid #000;
+        #nav-li {
+            max-height: calc(100vh - 8rem);
+            overflow-y: hidden;
+        }
 
-            vertical-align: top; /* 위 */
-            vertical-align: bottom; /* 아래 */
-            vertical-align: middle; /* 가운데 */
+        #nav-li:hover {
+            overflow-y: auto;
+        }
+
+        /* Optionally, add a smooth scrolling effect */
+        #nav-li::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #nav-li::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+        }
+
+        li > button:hover {
+            background-color: forestgreen;
+            border-color: forestgreen;
+        }
+
+        li > button:active {
+            background-color: greenyellow;
+            border-color: greenyellow;
+        }
+
+        .active {
+            background-color: forestgreen;
+            border-color: forestgreen;
+        }
+
+        td:hover {
+            background-color: forestgreen;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-<h1>알랑말랑 어드민</h1>
-<hr>
-<h3>게임 목록</h3>
-<div style="border-color: black; border-width: 1px; margin-bottom: 10px;">
-    <form id="game-form">
-        <input id="gameId" type="hidden">
-        <input id="gameName" type="text" placeholder="게임 명">
-        <input id="gameComment" type="text" placeholder="게임 코멘트">
-    </form>
-    <button id="gameBTN" type="button" onclick="addGame()">게임 추가</button>
-</div>
-<table>
-    <thead>
-    <tr>
-        <th>번호</th>
-        <th>게임명</th>
-        <th>코멘트</th>
-        <th>수정</th>
-        <th>주제 목록 보기</th>
-    </tr>
-    </thead>
-    <tbody id="game-list">
-    <tr>
-    </tr>
-    </tbody>
-</table>
+<!-- 우측 네비바 게임 목록-->
+<aside>
+    <nav class="nav-vertical">
+        <ul id="nav-li">
+        </ul>
+    </nav>
+</aside>
 
-<!-- 주제 시작 -->
-<div id="game-topic-div" style="display: none;">
-    <hr>
-    <h3 id="game-topic-title"> 주제 목록</h3>
-
-    <div style="border-color: black; border-width: 1px; margin-bottom: 10px;">
-        <form id="game-topic-form">
-            <input id="gameTopicId" type="hidden">
-            <input id="topicId" type="hidden">
-            <input id="topicName" type="text" placeholder="주제 명">
-            <input id="onBoard" type="text" placeholder="ex) 2024-05-15">
-        </form>
-        <button id="topicBTN" type="button" onclick="addTopic()">주제 추가</button>
-    </div>
-
-    <table>
-        <thead>
-        <tr>
-            <th>번호</th>
-            <th>주제명</th>
-            <th>온보딩</th>
-            <th>수정</th>
-            <th>단어 목록 보기</th>
-        </tr>
-        </thead>
-        <tbody id="topic-list">
-        <tr>
-        </tr>
-        </tbody>
-    </table>
-</div>
-<!-- 주제 끝 -->
-
-<!-- 주제 데이터 시작 -->
-<div id="topic-data-div" style="display: none;">
-    <hr>
-    <h3 id="topic-data-title"> 단어 목록</h3>
-
-    <div style="border-color: black; border-width: 1px; margin-bottom: 10px;">
-        <form id="topic-data-form">
-            <input id="topicData-topicId" type="hidden">
-            <input id="topicDataId" type="hidden">
-            <input id="topicDataName" type="text" placeholder="단어">
-            <input id="topicDataLevel" type="text" placeholder="ex) easy | hard">
-        </form>
-        <div id="excel-upload-div">
-            <input type="file" id="excel-upload" oninput="test11()">
+<main class="container" style="padding-left: 15rem; height: calc(100vh - 5rem)">
+    <h1 style="text-align: center; margin-top: 1rem;">알랑말랑 관리자 모드</h1>
+    <hr style="margin: 0">
+    <!-- 게임 목록 -->
+    <div id="data-game-div">
+        <input type="hidden" id="gameId">
+        <label for="gameName">게임 이름</label>
+        <input id="gameName" type="text">
+        <label for="gameComment">코멘트</label>
+        <input id="gameComment" type="text">
+        <div style="text-align: center">
+            <img src="/img/test.png" style="height: 457px">
         </div>
-        <button id="topic-dataBTN" type="button" onclick="addTopicData()">단어 추가</button>
+        <div role="group" style="margin-top: 1rem">
+            <button class="outline" id="gameBTN" type="button" onclick="addGame()" style="width: 100%">게임 추가</button>
+            <button class="outline" id="callTopicBtn" type="button" onclick="getTopicList()"
+                    style="width: 100%; display: none;">주제 보기
+            </button>
+            <button class="outline contrast" type="button" onclick="modifyGame(0)" style="width: 100%">초기화</button>
+        </div>
     </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th>번호</th>
-            <th>단어</th>
-            <th>레벨</th>
-            <th>수정</th>
-            <th>삭제</th>
-        </tr>
-        </thead>
-        <tbody id="topic-data-list">
-        <tr>
-        </tr>
-        </tbody>
-    </table>
-</div>
-<!-- 주제 데이터 끝 -->
+    <!-- 주제 시작 -->
+    <div id="data-topic-div" style="display: none;">
+        <input type="hidden" id="topicId">
+        <label for="topicName">주제</label>
+        <input id="topicName" type="text">
+        <label>온보드</label>
+        <fieldset role="group">
+            <input id="onBoardDate" type="date" name="date" onchange="isBool(this.value)">
+            <input id="onBoard" readonly>
+        </fieldset>
+        <div style="text-align: center">
+            <img src="/img/test.png" style="height: 457px">
+        </div>
+        <div role="group" style="margin-top: 1rem">
+            <button class="outline" id="topicBTN" type="button" onclick="addTopic()" style="width: 100%">주제 추가</button>
+            <button class="outline" id="callTopicDataBtn" type="button" onclick="getTopicDataList()"
+                    style="width: 100%; display: none;">단어 보기
+            </button>
+            <button class="outline contrast" type="button" onclick="modifyTopic(0)" style="width: 100%">초기화</button>
+        </div>
+    </div>
+    <!-- 주제 끝 -->
+
+    <!-- 주제 데이터 시작 -->
+    <div id="data-word-div" style="display: none;">
+        <dialog id="add-word-modal">
+            <article>
+                <input id="topicDataId" type="hidden">
+                <label>단어
+                    <input id="topicDataName" type="text" placeholder="단어">
+                </label>
+                <label>난이도
+                    <select id="topicDataLevel" aria-label="Select your favorite cuisine..." required>
+                        <option selected disabled value="">
+                            난이도 선택..
+                        </option>
+                        <option value="easy">쉬움</option>
+                        <option value="hard">어려움</option>
+                    </select>
+                </label>
+                <footer>
+                    <button role="button" class="secondary" data-target="add-word-modal" onclick="toggleModal(event)">
+                        닫기
+                    </button>
+                    <button class="outline" id="topic-dataBTN" data-target="add-word-modal" onclick="addTopicData()">
+                        추가
+                    </button>
+                    <button class="outline" id="topic-data-delBTN" data-target="add-word-modal"
+                            onclick="deleteTopicData()">
+                        삭제
+                    </button>
+                </footer>
+            </article>
+        </dialog>
+
+        <div class="grid">
+            <div>
+                <button style="width: 100%" class="outline" id="topic-dataBTN" data-target="add-word-modal"
+                        onclick="openAddWordModal(0)">단어
+                    추가
+                </button>
+            </div>
+            <div>
+                <div id="excel-upload-div">
+                    <input type="file" id="excel-upload" oninput="uploadExcelWord()">
+                </div>
+            </div>
+        </div>
+
+        <table style="text-align: center">
+            <thead style="position: sticky; top: 0px; z-index: 1">
+            <tr>
+                <th>쉬움</th>
+                <th>어려움</th>
+            </tr>
+            </thead>
+            <tbody id="topic-data-list">
+            <tr>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- 주제 데이터 끝 -->
+</main>
 
 </body>
 </html>

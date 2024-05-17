@@ -66,10 +66,9 @@ export class ViewController {
     return res.render('admin.ejs');
   }
 
-  @Post('/test/:topicId')
+  @Post('/excel/upload/:topicId')
   @UseInterceptors(FileInterceptor('file'))
   async handleExcel(@UploadedFile() file, @Param('topicId') topicId: number) {
-    console.log(topicId);
     const workbook = XLSX.read(file.buffer, { type: 'buffer' });
 
     // 첫번째 sheet 의 이름을 조회합니다.
