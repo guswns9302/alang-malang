@@ -108,7 +108,8 @@
             <input id="onBoard" readonly>
         </fieldset>
         <div style="text-align: center">
-            <img src="/img/test.png" style="height: 457px">
+            <input id="topicImageUpload" type="file" accept="image/*" onchange="topicImageSave()" style="display: none">
+            <img id="topicImage" src="/img/test.png" onclick="topicImageUpload()" style="height: 457px; cursor: pointer;">
         </div>
         <div role="group" style="margin-top: 1rem">
             <button class="outline" id="topicBTN" type="button" onclick="addTopic()" style="width: 100%">주제 추가</button>

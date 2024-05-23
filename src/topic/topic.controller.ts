@@ -7,12 +7,15 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { TopicService } from './topic.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
 import { TopicRes } from './dto/topic.res';
 import { TopicDataRes } from '../topic-data/dto/topic-data.res';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('topic')
 export class TopicController {
@@ -47,5 +50,11 @@ export class TopicController {
     @Param('topicId') topicId: number,
   ): Promise<TopicRes[]> {
     return this.topicService.remove(+gameId, +topicId);
+  }
+
+  @Post('/image/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  imageUpload(@UploadedFile() file: Express.Multer.File) {
+    return this.topicService.imageUpload(file);
   }
 }

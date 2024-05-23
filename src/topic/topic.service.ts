@@ -139,6 +139,10 @@ export class TopicService {
     return this.fyShuffle(resultList);
   }
 
+  async imageUpload(file: Express.Multer.File): Promise<string> {
+    return file.filename;
+  }
+
   fyShuffle = (arr) => {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor((i + 1) * Math.random());
