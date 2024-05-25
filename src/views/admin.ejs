@@ -86,7 +86,8 @@
         <label for="gameComment">코멘트</label>
         <input id="gameComment" type="text">
         <div style="text-align: center">
-            <img src="/img/test.png" style="height: 457px">
+            <input type="file" id="topicImgInput" onchange="readURL(this);">
+            <img id="topicImg" src="/img/test.png" style="height: 457px" onclick="topicImgInput();">
         </div>
         <div role="group" style="margin-top: 1rem">
             <button class="outline" id="gameBTN" type="button" onclick="addGame()" style="width: 100%">게임 추가</button>

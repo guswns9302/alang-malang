@@ -444,7 +444,7 @@ function uploadExcelWord() {
           generateTopicDataList(response.data);
           $('#excel-upload-div').empty();
           $('#excel-upload-div').append(
-            `<input type="file" id="excel-upload" oninput="test11()">`,
+              `<input type="file" id="excel-upload" oninput="test11()">`,
           );
           alert('엑셀 데이터가 추가됬다냥~');
         },
@@ -458,4 +458,19 @@ function uploadExcelWord() {
       console.log(e);
     },
   });
+}
+function readURL(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById('topicImg').src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+  } else {
+    document.getElementById('topicImg').src = "";
+  }
+}
+
+function topicImgInput(){
+  document.getElementById("topicImgInput").click();
 }
