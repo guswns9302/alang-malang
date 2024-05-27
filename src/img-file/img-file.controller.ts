@@ -37,19 +37,21 @@ export class ImgFileController {
       file.filename,
       file.path,
     );
-    const downloadUrl = `http://localhost:3000/img-file/download/${savedFile.filename}`;
+    // const downloadUrl = `http://localhost:3000/api/img-file/download/${savedFile.filename}`;
+    const downloadUrl = `https://am.teamexithere.com/api/img-file/download/${savedFile.filename}`;
     return {
       filename: savedFile.filename,
       path: savedFile.path,
       url: downloadUrl,
     };
   }
+  
   @Get('download/:filename')
   async downloadFile(
     @Param('filename') filename: string,
     @Res() res: Response,
   ) {
-    const filePath = join(process.cwd(), 'uploads', filename);
+    const filePath = join(process.cwd(), 'uploads-imgFile', filename);
     res.sendFile(filePath);
   }
 }

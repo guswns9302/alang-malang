@@ -11,6 +11,7 @@ import { RankModule } from './rank/rank.module';
 import { ConfigModule } from '@nestjs/config';
 import { ViewController } from './views/view/view.controller';
 import { ViewModule } from './views/view/view.module';
+import { ImgFileModule } from './img-file/img-file.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ViewModule } from './views/view/view.module';
     TopicDataModule,
     RankModule,
     ViewModule,
+    ImgFileModule,
   ],
   controllers: [AppController, ViewController],
   providers: [AppService],

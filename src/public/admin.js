@@ -3,6 +3,7 @@ $(document).ready(function () {
 });
 
 let GAME_LIST = [];
+let uploadedTopicImageUrl = '';
 
 function getGameList() {
   $.ajax({
@@ -23,27 +24,51 @@ function getGameList() {
 function addGame() {
   let gameName = $('#gameName').val();
   let gameComment = $('#gameComment').val();
-
-  $.ajax({
-    url: '/api/game',
-    method: 'POST',
-    data: JSON.stringify({
-      gameName: gameName,
-      gameComment: gameComment,
-      gameImg: '이미지',
-    }),
-    contentType: 'application/json',
-    dataType: 'json',
-    success: function (response) {
-      alert('게임 추가됬다야~');
-      modifyGame(0);
-      generateGameList(response.data);
-    },
-    error: function (response) {
-      console.log('실패');
-      console.log(response);
-    },
-  });
+  console.log(uploadedTopicImageUrl);
+  if(!uploadedTopicImageUrl){
+    $.ajax({
+      url: '/api/game',
+      method: 'POST',
+      data: JSON.stringify({
+        gameName: gameName,
+        gameComment: gameComment,
+        // gameImg: 'http://localhost:3000/api/img-file/download/img/test.png',
+        gameImg: 'https://am.teamexithere.com/api/img-file/download/img/test.png',
+      }),
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function (response) {
+        alert('게임 추가됬다야~');
+        modifyGame(0);
+        generateGameList(response.data);
+      },
+      error: function (response) {
+        console.log('실패');
+        console.log(response);
+      },
+    });
+  }else{
+    $.ajax({
+      url: '/api/game',
+      method: 'POST',
+      data: JSON.stringify({
+        gameName: gameName,
+        gameComment: gameComment,
+        gameImg: uploadedTopicImageUrl,
+      }),
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function (response) {
+        alert('게임 추가됬다야~');
+        modifyGame(0);
+        generateGameList(response.data);
+      },
+      error: function (response) {
+        console.log('실패');
+        console.log(response);
+      },
+    });
+  }
 }
 
 function generateGameList(data) {
@@ -459,15 +484,38 @@ function uploadExcelWord() {
     },
   });
 }
-function readURL(input) {
-  if (input.files && input.files[0]) {
+
+function topicImgUpload() {
+  const ImgFile = $('#topicImgInput')[0].files[0];
+  if (ImgFile) {
     var reader = new FileReader();
     reader.onload = function (e) {
       document.getElementById('topicImg').src = e.target.result;
     };
-    reader.readAsDataURL(input.files[0]);
+    reader.readAsDataURL(ImgFile);
+
+    const formData = new FormData();
+    formData.append('ImgFile', ImgFile);
+
+    $.ajax({
+      url: '/api/img-file/upload',
+      type: 'POST',
+      enctype: 'multipart/form-data',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: function(response) {
+        uploadedTopicImageUrl = response.data.url;
+        console.log(uploadedTopicImageUrl);
+      },
+      error: function(xhr, status, error) {
+        console.error('Error uploading file:', error);
+        console.log("fail");
+      }
+    });
+
   } else {
-    document.getElementById('topicImg').src = "";
+    document.getElementById('topicImg').src = "/img/test.png";
   }
 }
 
