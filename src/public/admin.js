@@ -1,5 +1,18 @@
 $(document).ready(function () {
   getGameList();
+
+  $('#topicImage').click(function () {
+    $('#topicImageUpload').click();
+  });
+
+  $('#topicImageUpload').change(function () {
+    const topicImage = this.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      $('#topicImage').attr('src', reader.result);
+    };
+    reader.readAsDataURL(topicImage);
+  });
 });
 
 let GAME_LIST = [];
@@ -155,62 +168,58 @@ function isBool(date) {
   }
 }
 
-function topicImageUpload() {
-  $('#topicImageUpload').click();
-}
-
-function topicImageSave() {
-  let topicImage = $('#topicImageUpload')[0].files[0];
-  let formData = new FormData();
-  formData.append('file', topicImage);
-
-  $.ajax({
-    url: '/api/topic/image/upload',
-    method: 'POST',
-    enctype: 'multipart/form-data',
-    contentType: false,
-    processData: false,
-    data: formData,
-    success: function (response) {
-      alert('주제 이미지 업로드 됬다야~');
-      console.log(response);
-      $('#topicImage').attr('src', response.data);
-      $('#topicImage').attr('src', '/img/' + response.data);
-    },
-    error: function (response) {
-      console.log('실패');
-      console.log(response);
-    },
-  });
-}
+// function topicImageSave() {
+//   let topicImage = $('#topicImageUpload')[0].files[0];
+//   let formData = new FormData();
+//   formData.append('file', topicImage);
+//
+//   $.ajax({
+//     url: '/api/topic/image/upload',
+//     method: 'POST',
+//     enctype: 'multipart/form-data',
+//     contentType: false,
+//     processData: false,
+//     data: formData,
+//     success: function (response) {
+//       alert('주제 이미지 업로드 됬다야~');
+//       console.log(response);
+//       $('#topicImage').attr('src', response.data);
+//       $('#topicImage').attr('src', '/img/' + response.data);
+//     },
+//     error: function (response) {
+//       console.log('실패');
+//       console.log(response);
+//     },
+//   });
+// }
 
 function addTopic() {
-  let gameId = $('#gameId').val();
-  let topicName = $('#topicName').val();
-  let onBoard = $('#onBoardDate').val();
-  let topicImage = $('#topicImage').attr('src');
-
-  $.ajax({
-    url: '/api/topic',
-    method: 'POST',
-    data: JSON.stringify({
-      gameId: Number(gameId),
-      topicName: topicName,
-      topicImg: topicImage,
-      onBoard: onBoard,
-    }),
-    contentType: 'application/json',
-    dataType: 'json',
-    success: function (response) {
-      alert('주제 추가 됬다야~');
-      modifyTopic(0);
-      generateTopicList(response.data);
-    },
-    error: function (response) {
-      console.log('실패');
-      console.log(response);
-    },
-  });
+  // let gameId = $('#gameId').val();
+  // let topicName = $('#topicName').val();
+  // let onBoard = $('#onBoardDate').val();
+  // let topicImage = $('#topicImage').attr('src');
+  //
+  // $.ajax({
+  //   url: '/api/topic',
+  //   method: 'POST',
+  //   data: JSON.stringify({
+  //     gameId: Number(gameId),
+  //     topicName: topicName,
+  //     topicImg: topicImage,
+  //     onBoard: onBoard,
+  //   }),
+  //   contentType: 'application/json',
+  //   dataType: 'json',
+  //   success: function (response) {
+  //     alert('주제 추가 됬다야~');
+  //     modifyTopic(0);
+  //     generateTopicList(response.data);
+  //   },
+  //   error: function (response) {
+  //     console.log('실패');
+  //     console.log(response);
+  //   },
+  // });
 }
 
 function modifyTopic(topicId) {
