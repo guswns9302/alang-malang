@@ -6,12 +6,8 @@ $(document).ready(function () {
   });
 
   $('#topicImageUpload').change(function () {
-    const topicImage = this.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      $('#topicImage').attr('src', reader.result);
-    };
-    reader.readAsDataURL(topicImage);
+    const topicImage = URL.createObjectURL(this.files[0]);
+    $('#topicImage').attr('src', topicImage);
   });
 });
 
