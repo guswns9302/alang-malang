@@ -16,6 +16,7 @@ import { UpdateTopicDto } from './dto/update-topic.dto';
 import { TopicRes } from './dto/topic.res';
 import { TopicDataRes } from '../topic-data/dto/topic-data.res';
 import { FileInterceptor } from '@nestjs/platform-express';
+import * as path from 'path';
 
 @Controller('topic')
 export class TopicController {
@@ -52,9 +53,14 @@ export class TopicController {
     return this.topicService.remove(+gameId, +topicId);
   }
 
-  @Post('/image/upload')
+  @Post('/image')
   @UseInterceptors(FileInterceptor('file'))
   imageUpload(@UploadedFile() file: Express.Multer.File) {
     return this.topicService.imageUpload(file);
+  }
+
+  @Get('/image/:file')
+  imageDownload(@Param('file') file: string): string {
+    return path.join(process.cwd(), '/image/topic', file);
   }
 }
