@@ -21,54 +21,86 @@ function getGameList() {
   });
 }
 
+// function addGame() {
+//   let gameName = $('#gameName').val();
+//   let gameComment = $('#gameComment').val();
+//   console.log(uploadedTopicImageUrl);
+//   if(!uploadedTopicImageUrl){
+//     $.ajax({
+//       url: '/api/game',
+//       method: 'POST',
+//       data: JSON.stringify({
+//         gameName: gameName,
+//         gameComment: gameComment,
+//         // gameImg: 'http://localhost:3000/api/img-file/download/img/test.png',
+//         gameImg: 'https://am.teamexithere.com/api/img-file/download/img/test.png',
+//       }),
+//       contentType: 'application/json',
+//       dataType: 'json',
+//       success: function (response) {
+//         alert('게임 추가됬다야~');
+//         modifyGame(0);
+//         generateGameList(response.data);
+//       },
+//       error: function (response) {
+//         console.log('실패');
+//         console.log(response);
+//       },
+//     });
+//   }else{
+//     $.ajax({
+//       url: '/api/game',
+//       method: 'POST',
+//       data: JSON.stringify({
+//         gameName: gameName,
+//         gameComment: gameComment,
+//         gameImg: uploadedTopicImageUrl,
+//       }),
+//       contentType: 'application/json',
+//       dataType: 'json',
+//       success: function (response) {
+//         alert('게임 추가됬다야~');
+//         modifyGame(0);
+//         generateGameList(response.data);
+//       },
+//       error: function (response) {
+//         console.log('실패');
+//         console.log(response);
+//       },
+//     });
+//   }
+// }
 function addGame() {
-  let gameName = $('#gameName').val();
-  let gameComment = $('#gameComment').val();
-  console.log(uploadedTopicImageUrl);
-  if(!uploadedTopicImageUrl){
-    $.ajax({
-      url: '/api/game',
-      method: 'POST',
-      data: JSON.stringify({
-        gameName: gameName,
-        gameComment: gameComment,
-        // gameImg: 'http://localhost:3000/api/img-file/download/img/test.png',
-        gameImg: 'https://am.teamexithere.com/api/img-file/download/img/test.png',
-      }),
-      contentType: 'application/json',
-      dataType: 'json',
-      success: function (response) {
-        alert('게임 추가됬다야~');
-        modifyGame(0);
-        generateGameList(response.data);
-      },
-      error: function (response) {
-        console.log('실패');
-        console.log(response);
-      },
-    });
-  }else{
-    $.ajax({
-      url: '/api/game',
-      method: 'POST',
-      data: JSON.stringify({
-        gameName: gameName,
-        gameComment: gameComment,
-        gameImg: uploadedTopicImageUrl,
-      }),
-      contentType: 'application/json',
-      dataType: 'json',
-      success: function (response) {
-        alert('게임 추가됬다야~');
-        modifyGame(0);
-        generateGameList(response.data);
-      },
-      error: function (response) {
-        console.log('실패');
-        console.log(response);
-      },
-    });
-  }
+
+  const imgFile = $('#topicImgInput')[0].files[0];
+  const gameName = $('#gameName').val();
+  const gameComment = $('#gameComment').val();
+
+  var formData = new FormData();
+  if(imgFile){
+    formData.append('imgFile', imgFile);
+  } 
+  formData.append('gameName', gameName);
+  formData.append('gameComment', gameComment);
+  formData.append('gameImg','');
+
+  $.ajax({
+    url: '/api/game',
+    type: 'POST',
+    enctype: 'multipart/form-data',
+    processData: false,
+    contentType: false,
+    data: formData,
+    success: function(response) {
+      alert('게임 추가됬다야~');
+      modifyGame(0);
+      generateGameList(response.data);
+    },
+    error: function (response) {
+      console.log('실패');
+      console.log(response);
+    }
+  });
 }
 
 function generateGameList(data) {
@@ -485,7 +517,7 @@ function uploadExcelWord() {
   });
 }
 
-function topicImgUpload() {
+function topicImgUpload() {uploadedTopicImageUrl
   const ImgFile = $('#topicImgInput')[0].files[0];
   if (ImgFile) {
     var reader = new FileReader();
@@ -494,25 +526,25 @@ function topicImgUpload() {
     };
     reader.readAsDataURL(ImgFile);
 
-    const formData = new FormData();
-    formData.append('ImgFile', ImgFile);
+    // const formData = new FormData();
+    // formData.append('ImgFile', ImgFile);
 
-    $.ajax({
-      url: '/api/img-file/upload',
-      type: 'POST',
-      enctype: 'multipart/form-data',
-      processData: false,
-      contentType: false,
-      data: formData,
-      success: function(response) {
-        uploadedTopicImageUrl = response.data.url;
-        console.log(uploadedTopicImageUrl);
-      },
-      error: function(xhr, status, error) {
-        console.error('Error uploading file:', error);
-        console.log("fail");
-      }
-    });
+    // $.ajax({
+    //   url: '/api/img-file/upload',
+    //   type: 'POST',
+    //   enctype: 'multipart/form-data',
+    //   processData: false,
+    //   contentType: false,
+    //   data: formData,
+    //   success: function(response) {
+    //     uploadedTopicImageUrl = response.data.url;
+    //     console.log(uploadedTopicImageUrl);
+    //   },
+    //   error: function(xhr, status, error) {
+    //     console.error('Error uploading file:', error);
+    //     console.log("fail");
+    //   }
+    // });
 
   } else {
     document.getElementById('topicImg').src = "/img/test.png";

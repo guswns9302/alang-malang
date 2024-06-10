@@ -1,15 +1,26 @@
-import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UploadedFile, UseInterceptors, } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { GameRes } from './dto/game.res';
 import { UpdateGameDto } from './dto/update-game.dto';
+import { multerConfig } from '../config/multer.config';
 
 @Controller('game')
 export class GameController {
   constructor(private readonly gameService: GameService) {}
 
   @Post()
-  create(@Body() createGameDto: CreateGameDto): Promise<GameRes[]> {
+  @UseInterceptors(FileInterceptor('imgFile', multerConfig))
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() createGameDto: CreateGameDto
+  ): Promise<GameRes[]> {
+    if(file){
+      createGameDto.gameImg = file.filename;
+    }else{
+      createGameDto.gameImg = 'test.png'
+    }
     return this.gameService.create(createGameDto);
   }
 
