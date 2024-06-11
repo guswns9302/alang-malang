@@ -5,6 +5,9 @@ import { Game } from './entities/game.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateGameDto } from './dto/update-game.dto';
+import { join } from 'path';
+import { existsSync } from 'fs';
+import * as os from 'os';
 
 @Injectable()
 export class GameService {
@@ -41,10 +44,21 @@ export class GameService {
       throw new NotFoundException('Game not found');
     }
 
+    if (updateGameDto.gameImg){
+      game.img = updateGameDto.gameImg;
+    }
     game.name = updateGameDto.gameName;
     game.comment = updateGameDto.gameComment;
-    game.img = updateGameDto.gameImg;
+    
     await this.gameRepository.save(game);
     return this.find();
+  }
+
+  getFilePath(filename: string): string {
+    const filePath = join(os.homedir(), 'img', 'game', filename);
+    if (!existsSync(filePath)) {
+      throw new NotFoundException(`File ${filename} not found`);
+    }
+    return filePath;
   }
 }

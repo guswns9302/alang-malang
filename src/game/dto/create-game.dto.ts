@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 export class CreateGameDto {
   @IsString()
@@ -10,5 +10,6 @@ export class CreateGameDto {
   gameComment: string;
 
   @IsString()
-  gameImg: string;
+  @IsOptional()
+  gameImg?: string;
 }

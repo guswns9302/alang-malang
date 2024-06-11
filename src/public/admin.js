@@ -21,55 +21,6 @@ function getGameList() {
   });
 }
 
-// function addGame() {
-//   let gameName = $('#gameName').val();
-//   let gameComment = $('#gameComment').val();
-//   console.log(uploadedTopicImageUrl);
-//   if(!uploadedTopicImageUrl){
-//     $.ajax({
-//       url: '/api/game',
-//       method: 'POST',
-//       data: JSON.stringify({
-//         gameName: gameName,
-//         gameComment: gameComment,
-//         // gameImg: 'http://localhost:3000/api/img-file/download/img/test.png',
-//         gameImg: 'https://am.teamexithere.com/api/img-file/download/img/test.png',
-//       }),
-//       contentType: 'application/json',
-//       dataType: 'json',
-//       success: function (response) {
-//         alert('게임 추가됬다야~');
-//         modifyGame(0);
-//         generateGameList(response.data);
-//       },
-//       error: function (response) {
-//         console.log('실패');
-//         console.log(response);
-//       },
-//     });
-//   }else{
-//     $.ajax({
-//       url: '/api/game',
-//       method: 'POST',
-//       data: JSON.stringify({
-//         gameName: gameName,
-//         gameComment: gameComment,
-//         gameImg: uploadedTopicImageUrl,
-//       }),
-//       contentType: 'application/json',
-//       dataType: 'json',
-//       success: function (response) {
-//         alert('게임 추가됬다야~');
-//         modifyGame(0);
-//         generateGameList(response.data);
-//       },
-//       error: function (response) {
-//         console.log('실패');
-//         console.log(response);
-//       },
-//     });
-//   }
-// }
 function addGame() {
 
   const imgFile = $('#topicImgInput')[0].files[0];
@@ -82,11 +33,10 @@ function addGame() {
   } 
   formData.append('gameName', gameName);
   formData.append('gameComment', gameComment);
-  formData.append('gameImg','');
 
   $.ajax({
     url: '/api/game',
-    type: 'POST',
+    method: 'POST',
     enctype: 'multipart/form-data',
     processData: false,
     contentType: false,
@@ -120,6 +70,8 @@ function modifyGame(gameId, btn) {
   $.each($('#nav-li').find('button'), function (idx, value) {
     $(value).removeClass('active');
   });
+  $('#topicImgInput').val(''); // Reset the file input
+  $('#topicImgInput').text(''); // Clear the file name display
 
   if (Number(gameId) === 0) {
     $('#gameId').val('');
@@ -127,34 +79,43 @@ function modifyGame(gameId, btn) {
     $('#gameComment').val('');
     $('#gameBTN').text('게임 추가').attr('onclick', 'addGame()');
     $('#callTopicBtn').hide();
+    $('#topicImg').attr('src','http://localhost:3000/api/game/download/test.png');
     return;
   }
   $(btn).addClass('active');
-  let game = GAME_LIST.filter((x) => x.gameId === Number(gameId))[0];
+  let game = GAME_LIST.filter((x) => x.gameId === Number(gameId))[0];  
   $('#gameId').val(game.gameId);
   $('#gameName').val(game.gameName);
   $('#gameComment').val(game.gameComment);
+  $('#topicImg').attr('src','http://localhost:3000/api/game/download/'+game.gameImg); 
+  // $('#topicImg').attr('src','https://am.teamexithere.com/api/game/download/'+game.gameImg);  
 
   $('#gameBTN').text('게임 수정').attr('onclick', 'callModifyGame()');
   $('#callTopicBtn').show();
 }
 
 function callModifyGame() {
-  let gameId = $('#gameId').val();
+  const imgFile = $('#topicImgInput')[0].files[0];
+  let gameId = Number($('#gameId').val());
   let gameName = $('#gameName').val();
   let gameComment = $('#gameComment').val();
+
+  var formData = new FormData();
+  if(imgFile){
+    formData.append('imgFile', imgFile);
+  } 
+  formData.append('gameId', gameId);
+  formData.append('gameName', gameName);
+  formData.append('gameComment', gameComment);
+  formData.append('imgFile', ' ');
 
   $.ajax({
     url: '/api/game',
     method: 'PATCH',
-    data: JSON.stringify({
-      gameId: Number(gameId),
-      gameName: gameName,
-      gameComment: gameComment,
-      gameImg: '이미지',
-    }),
-    contentType: 'application/json',
-    dataType: 'json',
+    enctype: 'multipart/form-data',
+    processData: false,
+    contentType: false,
+    data: formData,
     success: function (response) {
       alert('게임 수정됬다야~');
       $('#gameName').val('');
@@ -525,30 +486,10 @@ function topicImgUpload() {uploadedTopicImageUrl
       document.getElementById('topicImg').src = e.target.result;
     };
     reader.readAsDataURL(ImgFile);
-
-    // const formData = new FormData();
-    // formData.append('ImgFile', ImgFile);
-
-    // $.ajax({
-    //   url: '/api/img-file/upload',
-    //   type: 'POST',
-    //   enctype: 'multipart/form-data',
-    //   processData: false,
-    //   contentType: false,
-    //   data: formData,
-    //   success: function(response) {
-    //     uploadedTopicImageUrl = response.data.url;
-    //     console.log(uploadedTopicImageUrl);
-    //   },
-    //   error: function(xhr, status, error) {
-    //     console.error('Error uploading file:', error);
-    //     console.log("fail");
-    //   }
-    // });
-
-  } else {
-    document.getElementById('topicImg').src = "/img/test.png";
-  }
+  } 
+  // else {
+  //   document.getElementById('topicImg').src = "/img/test.png";
+  // }
 }
 
 function topicImgInput(){

@@ -25,7 +25,7 @@ export class CommonExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost): any {
     const failRes: FailResponse = new FailResponse({
       code: `${exception.code as string}__${exception.type as string}`,
-      decs: exception.message,
+      decs: exception,
     });
     host.switchToHttp().getResponse().status(HttpStatus.OK).json(failRes);
   }

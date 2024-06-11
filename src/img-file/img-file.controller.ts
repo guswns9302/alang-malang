@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { extname, join } from 'path';
 import { Response } from 'express';
 import { multerConfig } from '../config/multer.config';
+import * as os from 'os';
 @Controller('img-file')
 export class ImgFileController {
   constructor(private readonly imgFileService: ImgFileService) {}
@@ -41,7 +42,7 @@ export class ImgFileController {
     @Param('filename') filename: string,
     @Res() res: Response,
   ) {
-    const filePath = join(process.cwd(), 'uploads-imgFile', filename);
+    const filePath = join(os.homedir(), '/img/game', filename);
     res.sendFile(filePath);
   }
 }
